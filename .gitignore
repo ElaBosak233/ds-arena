@@ -1,0 +1,6 @@
+# Project
+target
+/.idea
+/.vscode
+
+*.lock

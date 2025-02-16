@@ -1,0 +1,6 @@
+[package]
+name = "ds-arena"
+version = "0.0.1"
+edition = "2024"
+
+[dependencies]
