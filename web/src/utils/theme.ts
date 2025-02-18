@@ -1,14 +1,6 @@
 import { ThemeOptions } from "@mui/material";
 
 export const themeOptions: ThemeOptions = {
-    palette: {
-        // primary: {
-        //     main: "#6750a4",
-        // },
-        // secondary: {
-        //     main: "#625b71",
-        // },
-    },
     components: {
         MuiButton: {
             styleOverrides: {
