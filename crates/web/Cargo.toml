@@ -1,0 +1,25 @@
+[package]
+name = "dsa-web"
+version = "0.0.1"
+edition = "2024"
+publish = false
+resolver = "2"
+
+[dependencies]
+dsa-captcha = { workspace = true }
+dsa-model = { workspace = true }
+dsa-cache = { workspace = true }
+dsa-queue = { workspace = true }
+
+axum = { workspace = true }
+once_cell = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tower-http = { workspace = true }
+tokio = { workspace = true }
+chrono = { workspace = true }
+nanoid = { workspace = true }
+tower_governor = { workspace = true }

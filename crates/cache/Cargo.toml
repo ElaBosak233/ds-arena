@@ -1,0 +1,15 @@
+[package]
+name = "dsa-cache"
+version = "0.0.1"
+edition = "2024"
+publish = false
+resolver = "2"
+
+[dependencies]
+once_cell = { workspace = true }
+chrono = { workspace = true }
+tokio = { workspace = true }
+dashmap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }

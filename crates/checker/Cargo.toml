@@ -1,0 +1,18 @@
+[package]
+name = "dsa-checker"
+version = "0.0.1"
+edition = "2024"
+publish = false
+resolver = "2"
+
+[dependencies]
+dsa-env = { workspace = true }
+dsa-queue = { workspace = true }
+dsa-cache = { workspace = true }
+dsa-model = { workspace = true }
+
+tokio = { workspace = true }
+polars = { workspace = true }
+once_cell = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
