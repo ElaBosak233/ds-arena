@@ -1,0 +1,26 @@
+[package]
+name = "dsa-server"
+version = "0.0.1"
+edition = "2024"
+publish = false
+resolver = "2"
+
+[dependencies]
+dsa-web = { workspace = true }
+dsa-env = { workspace = true }
+dsa-cache = { workspace = true }
+dsa-checker = { workspace = true }
+
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }
+axum = { workspace = true }
+once_cell = { workspace = true }
+rustls = { workspace = true }
+tracing-appender = { workspace = true }
+tracing-error = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[[bin]]
+name = "dsa-server"
+path = "src/main.rs"

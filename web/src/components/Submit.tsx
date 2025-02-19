@@ -14,6 +14,7 @@ import { useState } from "react";
 
 export default function Submit() {
     const [value, setValue] = useState<File | null>(null);
+    const [captcha, setCaptcha] = useState<string>();
 
     return (
         <Stack direction={"row"} spacing={2}>

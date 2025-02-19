@@ -1,0 +1,17 @@
+[package]
+name = "dsa-captcha"
+version = "0.0.1"
+edition = "2024"
+publish = false
+resolver = "2"
+
+[dependencies]
+dsa-cache = { workspace = true }
+dsa-env = { workspace = true }
+
+nanoid = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+ring = { workspace = true }
+hex = { workspace = true }
