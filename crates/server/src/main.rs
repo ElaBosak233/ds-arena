@@ -42,7 +42,7 @@ async fn bootstrap() -> Result<(), anyhow::Error> {
 
     dsa_cache::init().await;
 
-    dsa_checker::init().await;
+    let _ = dsa_checker::init().await;
     dsa_web::init().await?;
 
     Ok(())

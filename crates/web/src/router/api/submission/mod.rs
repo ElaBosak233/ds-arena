@@ -34,18 +34,32 @@ pub async fn get_submission(
 pub async fn create_submission(
     mut multipart: Multipart,
 ) -> Result<WebResponse<dsa_model::Submission>, WebError> {
+    let mut captcha_answer = dsa_captcha::Answer::default();
     let mut filename = String::new();
     let mut data = Vec::<u8>::new();
     while let Some(field) = multipart.next_field().await.unwrap() {
-        if field.name() == Some("file") {
-            filename = field.file_name().unwrap().to_string();
-            data = match field.bytes().await {
-                Ok(bytes) => bytes.to_vec(),
-                Err(_err) => {
-                    return Err(WebError::BadRequest(json!("size_too_large")));
-                }
-            };
+        match field.name() {
+            Some("file") => {
+                filename = field.file_name().unwrap().to_string();
+                data = match field.bytes().await {
+                    Ok(bytes) => bytes.to_vec(),
+                    Err(_err) => {
+                        return Err(WebError::BadRequest(json!("size_too_large")));
+                    }
+                };
+            },
+            Some("captcha_id") => {
+                captcha_answer.id = Some(field.text().await.unwrap())
+            },
+            Some("captcha_answer") => {
+                captcha_answer.content = field.text().await.unwrap()
+            }
+            _ => {}
         }
+    }
+
+    if !dsa_captcha::check(&captcha_answer).await.unwrap_or(false) {
+        return Err(WebError::BadRequest(json!("captcha_error")));
     }
 
     let submission = dsa_model::Submission {
