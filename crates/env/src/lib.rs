@@ -12,13 +12,16 @@ static ENVS: Lazy<Env> = Lazy::new(|| Env {
         .ok()
         .and_then(|v| v.parse().ok())
         .unwrap_or(8889),
+    logger_level: std::env::var("LOGGER_LEVEL").unwrap_or("info".to_owned()),
     captcha_difficulty: std::env::var("CAPTCHA_DIFFICULTY")
         .ok()
         .and_then(|v| v.parse().ok())
         .unwrap_or(2),
-    logger_level: std::env::var("LOGGER_LEVEL").unwrap_or("info".to_owned()),
     criteria_path: std::env::var("CRITERIA_PATH").unwrap_or("resources/criteria.csv".to_owned()),
     flag_content: std::env::var("FLAG_CONTENT").unwrap_or("cdsctf{replace_with_ur_flag}".to_owned()),
+    expected_accuracy: std::env::var("EXPECTED_ACCURACY").ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(0.98),
 });
 
 pub fn get_env() -> &'static Env {

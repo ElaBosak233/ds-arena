@@ -21,7 +21,6 @@ impl Captcha {
 pub struct Answer {
     pub id: Option<String>,
     pub content: String,
-    pub client_ip: Option<String>,
 }
 
 #[derive(Debug, Error)]

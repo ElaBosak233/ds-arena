@@ -17,7 +17,13 @@ pub async fn checker() {
                     if let Ok(df) = CsvReader::new(reader).finish() {
                         let accuracy = check(df).await.unwrap_or(0.0);
                         submission.accuracy = Some(accuracy);
-                        submission.note = Some(dsa_env::get_env().flag_content.to_owned());
+
+                        submission.note = Some(if accuracy >= dsa_env::get_env().expected_accuracy {
+                            dsa_env::get_env().flag_content.to_owned()
+                        } else {
+                            format!("give_you_flag_when_score_gte_{}%", dsa_env::get_env().expected_accuracy * 100f64)
+                        })
+
                     } else {
                         submission.accuracy = Some(0.0);
                         submission.note = Some("invalid input".to_owned());
