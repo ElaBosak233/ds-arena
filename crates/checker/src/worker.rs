@@ -1,5 +1,7 @@
 use std::io::Cursor;
+
 use polars::prelude::{CsvReader, SerReader};
+
 use crate::check;
 
 pub async fn checker() {
@@ -18,12 +20,15 @@ pub async fn checker() {
                         let accuracy = check(df).await.unwrap_or(0.0);
                         submission.accuracy = Some(accuracy);
 
-                        submission.note = Some(if accuracy >= dsa_env::get_env().expected_accuracy {
-                            dsa_env::get_env().flag_content.to_owned()
-                        } else {
-                            format!("give_you_flag_when_score_gte_{}%", dsa_env::get_env().expected_accuracy * 100f64)
-                        })
-
+                        submission.note =
+                            Some(if accuracy >= dsa_env::get_env().expected_accuracy {
+                                dsa_env::get_env().flag_content.to_owned()
+                            } else {
+                                format!(
+                                    "give_you_flag_when_score_gte_{}%",
+                                    dsa_env::get_env().expected_accuracy * 100f64
+                                )
+                            })
                     } else {
                         submission.accuracy = Some(0.0);
                         submission.note = Some("invalid input".to_owned());

@@ -1,14 +1,16 @@
 pub mod api;
+mod proxy;
 
 use std::{net::IpAddr, time::Duration};
 
-use axum::{Router, body::Body, http::Request, middleware::from_fn, response::Response};
+use axum::{Router, body::Body, http::Request, response::Response};
 use tower_http::trace::TraceLayer;
 use tracing::{Span, debug, debug_span};
 
 pub async fn router() -> Router {
-    Router::new().merge(
-        Router::new().nest("/api", api::router().await).layer(
+    Router::new()
+        .nest("/api", api::router().await)
+        .layer(
             TraceLayer::new_for_http()
                 .make_span_with(|request: &Request<Body>| {
                     let ip = crate::util::network::get_client_ip(request)
@@ -23,6 +25,6 @@ pub async fn router() -> Router {
                 .on_response(|response: &Response, latency: Duration, _span: &Span| {
                     debug!("[{}] in {}ms", response.status(), latency.as_millis());
                 }),
-        ),
-    )
+        )
+        .merge(proxy::router())
 }

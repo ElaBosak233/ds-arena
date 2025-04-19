@@ -47,13 +47,9 @@ pub async fn create_submission(
                         return Err(WebError::BadRequest(json!("size_too_large")));
                     }
                 };
-            },
-            Some("captcha_id") => {
-                captcha_answer.id = Some(field.text().await.unwrap())
-            },
-            Some("captcha_answer") => {
-                captcha_answer.content = field.text().await.unwrap()
             }
+            Some("captcha_id") => captcha_answer.id = Some(field.text().await.unwrap()),
+            Some("captcha_answer") => captcha_answer.content = field.text().await.unwrap(),
             _ => {}
         }
     }
