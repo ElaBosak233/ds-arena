@@ -13,11 +13,7 @@ dsa-queue = { path = "crates/queue" }
 dsa-web = { path = "crates/web" }
 
 # Async
-async-trait = { version = "0.1" }
 tokio = { version = "1.43", features = ["full"] }
-tokio-util = { version = "0.7.13" }
-futures = { version = "^0.3" }
-futures-util = { version = "0.3" }
 tower = { version = "0.5" }
 tower-http = { version = "0.6", features = ["cors", "fs", "trace"] }
 
@@ -31,7 +27,6 @@ axum = { version = "0.8", features = [
     "tracing",
     "json",
 ] }
-cookie = { version = "0.18.1" }
 tower_governor = { version = "0.6" }
 
 # Security
@@ -40,18 +35,10 @@ ring = { version = "0.17" }
 hex = { version = "0.4.3" }
 
 # Data Handling
-uuid = { version = "1.12", features = [
-    "v4",
-    "fast-rng",
-    "macro-diagnostics"
-] }
 nanoid = { version = "0.4" }
-regex = { version = "1.11" }
 chrono = { version = "0.4", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
-serde_repr = { version = "0.1" }
-serde_with = { version = "3.12" }
 
 # Error Handling
 thiserror = { version = "2.0" }
@@ -69,10 +56,8 @@ tracing-error = { version = "0.2" }
 
 # Miscellaneous
 once_cell = { version = "1.20" }
-validator = { version = "0.20", features = ["derive"] }
 dashmap = { version = "6.1" }
 polars = { version = "0.46", features = ["lazy"] }
-tempfile = { version = "3.17" }
 
 [profile.release]
 opt-level = 3
