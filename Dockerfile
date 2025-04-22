@@ -15,7 +15,7 @@ RUN cargo fetch && \
     cargo build --release --bin dsa-server --target x86_64-unknown-linux-musl && \
     cp /app/target/x86_64-unknown-linux-musl/release/dsa-server /usr/local/bin/dsa-server
 
-FROM node:22 AS frontend
+FROM node:latest AS frontend
 
 WORKDIR /app
 
