@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
             host: "0.0.0.0",
             proxy: {
                 "/api": {
-                    target: apiUrl,
+                    target: process.env.VITE_DEV_API || "http://127.0.0.1:8889",
                     changeOrigin: true,
                     configure: (proxy, _options) => {
                         proxy.on("error", (_err, _req, res) => {
