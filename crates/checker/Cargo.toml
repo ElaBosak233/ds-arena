@@ -1,9 +1,13 @@
 [package]
 name = "dsa-checker"
-version = "0.0.1"
-edition = "2024"
-publish = false
-resolver = "2"
+resolver = "3"
+
+authors = { workspace = true }
+edition  = { workspace = true }
+publish = { workspace = true }
+repository = { workspace = true }
+rust-version = { workspace = true }
+version = { workspace = true }
 
 [dependencies]
 dsa-env = { workspace = true }

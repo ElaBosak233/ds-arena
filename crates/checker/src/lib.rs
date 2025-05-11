@@ -7,7 +7,6 @@ use polars::{
     io::SerReader,
     prelude::{LazyCsvReader, LazyFileListReader},
 };
-
 use crate::traits::CheckerError;
 
 mod traits;
