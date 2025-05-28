@@ -2,34 +2,34 @@ import { type Submission } from "@/models/submission";
 import { create } from "zustand";
 
 interface SharedState {
-    refresh: number;
-    setRefresh: () => void;
+  refresh: number;
+  setRefresh: () => void;
 
-    history: Array<Submission>;
-    saveHistory: (submission: Submission) => void;
+  history: Array<Submission>;
+  saveHistory: (submission: Submission) => void;
 }
 
 export const useSharedStore = create<SharedState>((set, get) => ({
-    refresh: 0,
-    setRefresh: () => set({ refresh: get().refresh + 1 }),
+  refresh: 0,
+  setRefresh: () => set({ refresh: get().refresh + 1 }),
 
-    history: [],
-    saveHistory: (submission: Submission) => {
-        const history = get().history;
+  history: [],
+  saveHistory: (submission: Submission) => {
+    const history = get().history;
 
-        const existingIndex = history.findIndex(
-            (item) => item.id === submission.id
-        );
+    const existingIndex = history.findIndex(
+      (item) => item.id === submission.id
+    );
 
-        if (existingIndex !== -1) {
-            const updatedHistory = [...history];
-            updatedHistory[existingIndex] = {
-                ...updatedHistory[existingIndex],
-                ...submission,
-            };
-            set({ history: updatedHistory });
-        } else {
-            set({ history: [submission, ...history] });
-        }
-    },
+    if (existingIndex !== -1) {
+      const updatedHistory = [...history];
+      updatedHistory[existingIndex] = {
+        ...updatedHistory[existingIndex],
+        ...submission,
+      };
+      set({ history: updatedHistory });
+    } else {
+      set({ history: [submission, ...history] });
+    }
+  },
 }));
