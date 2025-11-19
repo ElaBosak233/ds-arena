@@ -4,10 +4,6 @@ use tower_governor::GovernorError;
 
 use crate::traits::WebError;
 
-pub async fn box_error(err: axum::BoxError) -> WebError {
-    WebError::InternalServerError(json!(format!("{:?}", err)))
-}
-
 pub fn governor_error(err: GovernorError) -> Response<Body> {
     let web_err = match err {
         GovernorError::TooManyRequests {

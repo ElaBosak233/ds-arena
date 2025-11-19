@@ -1,7 +1,7 @@
-import { cn } from "@/utils";
+import { DatabaseIcon, MoonIcon, SunIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useApperanceStore } from "@/storages/appearance";
-import { DatabaseIcon, MoonIcon, SunIcon } from "lucide-react";
+import { cn } from "@/utils";
 
 function Navbar() {
   const { theme, setTheme } = useApperanceStore();

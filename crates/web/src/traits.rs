@@ -8,7 +8,6 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use tracing::error;
 
 #[derive(Clone, Debug, Default)]
 pub struct Ext {

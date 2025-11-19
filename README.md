@@ -11,7 +11,7 @@ FROM elabosak233/ds-arena:latest
 
 COPY ./criteria.csv /app/resources/criteria.csv
 
-ENV FLAG_CONTENT=tzuctf{whats_your_prolem}
+ENV FLAG=cdsctf{whats_your_prolem}
 ```
 
 Then build and run your own image.

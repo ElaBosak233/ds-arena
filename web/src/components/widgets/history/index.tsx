@@ -1,12 +1,11 @@
-import type { Submission } from "@/models/submission";
 import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { columns } from "./columns";
-import { useSharedStore } from "@/storages/shared";
+import { useEffect } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -15,10 +14,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { Submission } from "@/models/submission";
+import { useSharedStore } from "@/storages/shared";
+import type { WebResponse } from "@/types";
 import { cn } from "@/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEffect } from "react";
 import { alova } from "@/utils/alova";
+import { columns } from "./columns";
 
 function History() {
   const { history, saveHistory } = useSharedStore();
@@ -34,20 +35,18 @@ function History() {
     const interval = setInterval(async () => {
       let count = 0;
       history?.map(async (submission) => {
-        if (submission.accuracy != undefined) {
+        if (submission.accuracy) {
           return;
         }
 
-        const res = (
-          await alova.Get<any>("/submissions", {
-            params: {
-              id: submission.id,
-            },
-          })
-        ).data;
+        const res = await alova.Get<WebResponse<Submission>>("/submissions", {
+          params: {
+            id: submission.id,
+          },
+        });
 
         count++;
-        saveHistory(res);
+        saveHistory(res.data!);
       });
 
       if (!count) {
@@ -56,7 +55,7 @@ function History() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [history]);
+  }, [history, saveHistory]);
 
   return (
     <ScrollArea className={cn(["border", "rounded-md", "flex-1"])}>

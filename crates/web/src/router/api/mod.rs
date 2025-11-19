@@ -23,7 +23,7 @@ pub async fn index() -> impl IntoResponse {
 pub async fn get_captcha() -> Result<WebResponse<dsa_captcha::Captcha>, WebError> {
     let captcha = dsa_captcha::generate()
         .await
-        .map_err(|err| WebError::BadRequest(json!("captcha_error")))?;
+        .map_err(|_| WebError::BadRequest(json!("captcha_error")))?;
 
     Ok(WebResponse {
         code: StatusCode::OK.as_u16(),

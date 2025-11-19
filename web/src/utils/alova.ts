@@ -1,7 +1,7 @@
 import { createAlova } from "alova";
+import adapterFetch from "alova/fetch";
 import ReactHook from "alova/react";
 import { toast } from "sonner";
-import adapterFetch from "alova/fetch";
 
 export const alova = createAlova({
   baseURL: "/api",

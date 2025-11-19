@@ -26,7 +26,6 @@ pub async fn init() -> Result<(), anyhow::Error> {
             .burst_size(32)
             .key_extractor(GovernorKeyExtractor)
             .use_headers()
-            .error_handler(governor_error)
             .finish()
             .unwrap(),
     );
@@ -40,9 +39,10 @@ pub async fn init() -> Result<(), anyhow::Error> {
         }
     });
 
-    let router = router::router().await.layer(cors).layer(GovernorLayer {
-        config: governor_conf,
-    });
+    let router = router::router()
+        .await
+        .layer(cors)
+        .layer(GovernorLayer::new(governor_conf).error_handler(governor_error));
 
     APP.set(router)
         .map_err(|_| anyhow::anyhow!("Failed to set router into OnceCell"))?;

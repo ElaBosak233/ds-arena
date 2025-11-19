@@ -1,11 +1,14 @@
-import { useSharedStore } from "@/storages/shared";
-import { cn } from "@/utils";
-import { alova } from "@/utils/alova";
+import { BotIcon, FileIcon, RefreshCcwIcon, SendIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Field, FieldButton, FieldIcon } from "@/components/ui/field";
 import { TextField } from "@/components/ui/text-field";
-import { BotIcon, FileIcon, RefreshCcwIcon, SendIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import type { Captcha } from "@/models/captcha";
+import type { Submission } from "@/models/submission";
+import { useSharedStore } from "@/storages/shared";
+import type { WebResponse } from "@/types";
+import { cn } from "@/utils";
+import { alova } from "@/utils/alova";
 
 function Submit() {
   const sharedStore = useSharedStore();
@@ -30,6 +33,8 @@ function Submit() {
   }
 
   useEffect(() => {
+    void sharedStore?.refresh;
+
     const calculateWorker = new Worker(
       new URL("@/workers/pow.ts", import.meta.url),
       { type: "module" }
@@ -43,10 +48,10 @@ function Submit() {
 
     async function fetchCaptchaData() {
       setCaptchaLoading(true);
-      const res = (await alova.Get<any>("/captcha")).data;
+      const res = (await alova.Get<WebResponse<Captcha>>("/captcha")).data;
       const d = Number(res?.challenge?.split("#")[0]);
       const c = res?.challenge?.split("#")[1];
-      setCaptchaId(res?.id);
+      setCaptchaId(res?.id || "");
 
       calculateWorker.postMessage({ c, d });
     }
@@ -70,9 +75,9 @@ function Submit() {
     formData.append("captcha_id", captchaId!);
     formData.append("captcha_answer", captchaAnswer);
     alova
-      .Post<any>("/submissions", formData)
+      .Post<WebResponse<Submission>>("/submissions", formData)
       .then((res) => {
-        sharedStore.saveHistory(res.data);
+        sharedStore.saveHistory(res.data!);
       })
       .finally(() => {
         setFile(null);

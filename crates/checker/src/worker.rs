@@ -22,7 +22,7 @@ pub async fn checker() {
 
                         submission.note =
                             Some(if accuracy >= dsa_env::get_env().expected_accuracy {
-                                dsa_env::get_env().flag_content.to_owned()
+                                dsa_env::get_env().flag.to_owned()
                             } else {
                                 format!(
                                     "give_you_flag_when_score_gte_{}%",

@@ -1,13 +1,13 @@
-use std::collections::HashSet;
-
+use crate::traits::CheckerError;
 use anyhow::anyhow;
 use once_cell::sync::OnceCell;
 use polars::{
     frame::DataFrame,
-    io::SerReader,
-    prelude::{LazyCsvReader, LazyFileListReader},
+    prelude::*,
 };
-use crate::traits::CheckerError;
+use std::collections::HashSet;
+use std::path::PathBuf;
+use std::str::FromStr;
 
 mod traits;
 mod worker;
@@ -19,10 +19,11 @@ pub fn get_criteria() -> &'static DataFrame {
 }
 
 pub async fn init() -> Result<(), CheckerError> {
-    let df = LazyCsvReader::new(&dsa_env::get_env().criteria_path)
+    let df = CsvReadOptions::default()
         .with_has_header(true)
-        .finish()?
-        .collect()?;
+        .with_parse_options(CsvParseOptions::default().with_try_parse_dates(true))
+        .try_into_reader_with_file_path(Some(PathBuf::from_str(&dsa_env::get_env().criteria_path).unwrap()))?
+        .finish()?;
 
     CRITERIA.set(df).ok();
 
@@ -73,20 +74,17 @@ pub async fn check(input: DataFrame) -> Result<f64, CheckerError> {
 
 #[cfg(test)]
 mod tests {
-    use polars::prelude::{LazyCsvReader, LazyFileListReader};
-
     use super::*;
 
     #[tokio::test]
     async fn test() {
         init().await.unwrap();
 
-        let df = LazyCsvReader::new("../../resources/test.csv")
+        let df = CsvReadOptions::default()
             .with_has_header(true)
-            .finish()
-            .unwrap()
-            .collect()
-            .unwrap();
+            .with_parse_options(CsvParseOptions::default().with_try_parse_dates(true))
+            .try_into_reader_with_file_path(Some("../../resources/test.csv".into())).unwrap()
+            .finish().unwrap();
 
         let res = check(df).await.unwrap();
         println!("{:?}", res);

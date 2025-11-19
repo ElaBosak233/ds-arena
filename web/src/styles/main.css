@@ -1,12 +1,12 @@
 @import "tailwindcss";
-@plugin "tailwindcss-animate";
-
 @import "@fontsource-variable/ubuntu-sans-mono";
 @import "@fontsource-variable/ubuntu-sans-mono/wght";
 @import "@fontsource-variable/ubuntu-sans-mono/wght-italic";
 @import "@fontsource-variable/ubuntu-sans";
 @import "@fontsource-variable/ubuntu-sans/wght";
 @import "@fontsource-variable/ubuntu-sans/wght-italic";
+
+@plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
 

@@ -18,8 +18,7 @@ static ENVS: Lazy<Env> = Lazy::new(|| Env {
         .and_then(|v| v.parse().ok())
         .unwrap_or(2),
     criteria_path: std::env::var("CRITERIA_PATH").unwrap_or("resources/criteria.csv".to_owned()),
-    flag_content: std::env::var("FLAG_CONTENT")
-        .unwrap_or("cdsctf{replace_with_ur_flag}".to_owned()),
+    flag: std::env::var("FLAG").unwrap_or("cdsctf{replace_with_ur_flag}".to_owned()),
     expected_accuracy: std::env::var("EXPECTED_ACCURACY")
         .ok()
         .and_then(|v| v.parse().ok())

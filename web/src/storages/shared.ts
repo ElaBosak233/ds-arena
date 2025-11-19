@@ -1,5 +1,5 @@
-import { type Submission } from "@/models/submission";
 import { create } from "zustand";
+import type { Submission } from "@/models/submission";
 
 interface SharedState {
   refresh: number;

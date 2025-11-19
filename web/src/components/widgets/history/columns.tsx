@@ -1,5 +1,5 @@
+import type { ColumnDef } from "@tanstack/react-table";
 import type { Submission } from "@/models/submission";
-import { type ColumnDef } from "@tanstack/react-table";
 
 const columns: ColumnDef<Submission>[] = [
   {

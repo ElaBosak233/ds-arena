@@ -1,6 +1,6 @@
+import { cva } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "@/utils";
-import { cva } from "class-variance-authority";
 import { Button } from "./button";
 
 const FieldContext = React.createContext<{
@@ -16,11 +16,11 @@ interface FieldRootProps extends React.ComponentProps<"div"> {
   disabled?: boolean;
 }
 function FieldRoot(props: FieldRootProps) {
-  const { className, size, disabled, children, ref, ...rest } = props;
+  const { className, size, disabled, children, ...rest } = props;
 
   let hasIcon = false;
   let hasExtraButton = false;
-  let autoHeight = false;
+  const autoHeight = false;
 
   React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return;

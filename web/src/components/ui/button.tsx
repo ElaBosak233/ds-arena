@@ -1,13 +1,8 @@
 import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { LoaderCircleIcon } from "lucide-react";
-
+import type { ButtonHTMLAttributes, CSSProperties, Ref } from "react";
 import { cn } from "@/utils";
-import React, {
-  type ButtonHTMLAttributes,
-  type CSSProperties,
-  type Ref,
-} from "react";
 
 const buttonVariants = cva(
   [

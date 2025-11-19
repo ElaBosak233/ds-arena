@@ -1,10 +1,10 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/utils";
-import { Navbar } from "@/components/widgets/navbar";
-import { History } from "@/components/widgets/history";
-import { useApperanceStore } from "@/storages/appearance";
 import { useEffect } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { History } from "@/components/widgets/history";
+import { Navbar } from "@/components/widgets/navbar";
 import { Submit } from "@/components/widgets/submit";
+import { useApperanceStore } from "@/storages/appearance";
+import { cn } from "@/utils";
 
 function App() {
   const { theme } = useApperanceStore();
