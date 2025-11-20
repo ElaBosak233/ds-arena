@@ -644,7 +644,7 @@ dependencies = [
 
 [[package]]
 name = "dsa-cache"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "chrono",
  "dashmap",
@@ -654,7 +654,7 @@ dependencies = [
 
 [[package]]
 name = "dsa-captcha"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "anyhow",
  "dsa-cache",
@@ -668,7 +668,7 @@ dependencies = [
 
 [[package]]
 name = "dsa-checker"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "anyhow",
  "dsa-cache",
@@ -679,25 +679,26 @@ dependencies = [
  "polars",
  "thiserror 2.0.17",
  "tokio",
+ "tracing",
 ]
 
 [[package]]
 name = "dsa-env"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "once_cell",
 ]
 
 [[package]]
 name = "dsa-model"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "dsa-queue"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "dashmap",
  "once_cell",
@@ -707,7 +708,7 @@ dependencies = [
 
 [[package]]
 name = "dsa-server"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "anyhow",
  "axum",
@@ -726,7 +727,7 @@ dependencies = [
 
 [[package]]
 name = "dsa-web"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "anyhow",
  "axum",

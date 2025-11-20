@@ -1,13 +1,11 @@
-use crate::traits::CheckerError;
+use std::{collections::HashSet, path::PathBuf, str::FromStr};
+
 use anyhow::anyhow;
 use once_cell::sync::OnceCell;
-use polars::{
-    frame::DataFrame,
-    prelude::*,
-};
-use std::collections::HashSet;
-use std::path::PathBuf;
-use std::str::FromStr;
+use polars::{frame::DataFrame, prelude::*};
+use tracing::info;
+
+use crate::traits::CheckerError;
 
 mod traits;
 mod worker;
@@ -21,8 +19,9 @@ pub fn get_criteria() -> &'static DataFrame {
 pub async fn init() -> Result<(), CheckerError> {
     let df = CsvReadOptions::default()
         .with_has_header(true)
-        .with_parse_options(CsvParseOptions::default().with_try_parse_dates(true))
-        .try_into_reader_with_file_path(Some(PathBuf::from_str(&dsa_env::get_env().criteria_path).unwrap()))?
+        .try_into_reader_with_file_path(Some(
+            PathBuf::from_str(&dsa_env::get_env().criteria_path).unwrap(),
+        ))?
         .finish()?;
 
     CRITERIA.set(df).ok();
@@ -69,6 +68,13 @@ pub async fn check(input: DataFrame) -> Result<f64, CheckerError> {
     let intersection_size = set1.intersection(&set2).count();
 
     let similarity = intersection_size as f64 / std::cmp::max(rows1, rows2) as f64;
+
+    info!(
+        "{} / {}",
+        intersection_size as f64,
+        std::cmp::max(rows1, rows2) as f64
+    );
+
     Ok(similarity)
 }
 
@@ -82,9 +88,10 @@ mod tests {
 
         let df = CsvReadOptions::default()
             .with_has_header(true)
-            .with_parse_options(CsvParseOptions::default().with_try_parse_dates(true))
-            .try_into_reader_with_file_path(Some("../../resources/test.csv".into())).unwrap()
-            .finish().unwrap();
+            .try_into_reader_with_file_path(Some("../../resources/test.csv".into()))
+            .unwrap()
+            .finish()
+            .unwrap();
 
         let res = check(df).await.unwrap();
         println!("{:?}", res);

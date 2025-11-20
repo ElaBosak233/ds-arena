@@ -1,13 +1,12 @@
 use std::{
     backtrace::{Backtrace, BacktraceStatus},
     panic,
-    path::Path,
     thread::sleep,
 };
 
 use once_cell::sync::OnceCell;
-use tracing::{Level, error, info, info_span, warn};
-use tracing_appender::{non_blocking, non_blocking::WorkerGuard, rolling};
+use tracing::{error, info, warn};
+use tracing_appender::{non_blocking, non_blocking::WorkerGuard};
 use tracing_error::ErrorLayer;
 use tracing_subscriber::{EnvFilter, Registry, layer::SubscriberExt};
 

@@ -17,6 +17,7 @@ dsa-model = { workspace = true }
 
 tokio = { workspace = true }
 polars = { workspace = true }
+tracing = { workspace = true }
 once_cell = { workspace = true }
 thiserror = { workspace = true }
 anyhow = { workspace = true }
