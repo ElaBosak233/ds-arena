@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::path::{Path, PathBuf};
 
 use anyhow::anyhow;
 use once_cell::sync::OnceCell;
@@ -17,9 +18,17 @@ pub fn get_criteria() -> &'static DataFrame {
 }
 
 pub async fn init() -> Result<(), CheckerError> {
+    let criteria_path = resolve_criteria_path(&dsa_env::get_env().criteria_path)?;
+    tracing::info!(path = %criteria_path.display(), "Loading checker criteria");
+    if !criteria_path.is_file() {
+        return Err(CheckerError::OtherError(anyhow!(
+            "criteria file not found: {}",
+            criteria_path.display()
+        )));
+    }
     let df = CsvReadOptions::default()
         .with_has_header(true)
-        .try_into_reader_with_file_path(Some(dsa_env::get_env().criteria_path.clone().into()))?
+        .try_into_reader_with_file_path(Some(criteria_path))?
         .finish()?;
 
     CRITERIA.set(df).ok();
@@ -27,6 +36,24 @@ pub async fn init() -> Result<(), CheckerError> {
     worker::checker().await;
 
     Ok(())
+}
+
+fn resolve_criteria_path(configured_path: &str) -> Result<PathBuf, CheckerError> {
+    let configured_path = Path::new(configured_path);
+    if configured_path.is_absolute() || configured_path.exists() {
+        return Ok(configured_path.to_path_buf());
+    }
+
+    let executable = std::env::current_exe()
+        .map_err(|err| CheckerError::OtherError(anyhow!("failed to locate executable: {err}")))?;
+    for directory in executable.ancestors() {
+        let candidate = directory.join(configured_path);
+        if candidate.exists() {
+            return Ok(candidate);
+        }
+    }
+
+    Ok(configured_path.to_path_buf())
 }
 
 pub async fn check(input: DataFrame) -> Result<f64, CheckerError> {
@@ -81,6 +108,12 @@ fn compare(input: &DataFrame, criteria: &DataFrame) -> Result<f64, CheckerError>
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn resolves_repository_resources_from_the_executable_tree() {
+        let path = resolve_criteria_path("resources/criteria.csv").unwrap();
+        assert!(path.exists());
+    }
 
     fn fixture(name: &str) -> DataFrame {
         CsvReadOptions::default()
