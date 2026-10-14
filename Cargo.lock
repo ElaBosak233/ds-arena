@@ -656,7 +656,7 @@ dependencies = [
 
 [[package]]
 name = "dsa-cache"
-version = "1.1.1"
+version = "1.2.0"
 dependencies = [
  "chrono",
  "dashmap",
@@ -666,7 +666,7 @@ dependencies = [
 
 [[package]]
 name = "dsa-captcha"
-version = "1.1.1"
+version = "1.2.0"
 dependencies = [
  "anyhow",
  "dsa-cache",
@@ -680,7 +680,7 @@ dependencies = [
 
 [[package]]
 name = "dsa-checker"
-version = "1.1.1"
+version = "1.2.0"
 dependencies = [
  "anyhow",
  "dsa-cache",
@@ -696,21 +696,21 @@ dependencies = [
 
 [[package]]
 name = "dsa-env"
-version = "1.1.1"
+version = "1.2.0"
 dependencies = [
  "once_cell",
 ]
 
 [[package]]
 name = "dsa-model"
-version = "1.1.1"
+version = "1.2.0"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "dsa-queue"
-version = "1.1.1"
+version = "1.2.0"
 dependencies = [
  "dashmap",
  "once_cell",
@@ -720,7 +720,7 @@ dependencies = [
 
 [[package]]
 name = "dsa-server"
-version = "1.1.1"
+version = "1.2.0"
 dependencies = [
  "anyhow",
  "axum",
@@ -739,7 +739,7 @@ dependencies = [
 
 [[package]]
 name = "dsa-web"
-version = "1.1.1"
+version = "1.2.0"
 dependencies = [
  "anyhow",
  "axum",
@@ -2927,9 +2927,9 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.23.45"
+version = "0.23.46"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
 dependencies = [
  "once_cell",
  "ring",

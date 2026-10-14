@@ -8,7 +8,7 @@ edition = "2024"
 publish = false
 repository = "https://github.com/ElaBosak233/ds-arena"
 rust-version = "1.99.0"
-version = "1.1.1"
+version = "1.2.0"
 
 [workspace.dependencies]
 # Local Libraries
@@ -38,7 +38,11 @@ axum = { version = "0.8.9", features = [
 tower_governor = { version = "0.8.0" }
 
 # Security
-rustls = { version = "0.23.45", default-features = false, features = ["ring", "std", "tls12"] }
+rustls = { version = "0.23.46", default-features = false, features = [
+    "ring",
+    "std",
+    "tls12",
+] }
 ring = { version = "0.17.14" }
 hex = { version = "0.4.3" }
 
@@ -65,7 +69,10 @@ tracing-error = { version = "0.2.1" }
 # Miscellaneous
 once_cell = { version = "1.21.4" }
 dashmap = { version = "6.2.1" }
-polars = { version = "0.55.2", default-features = false, features = ["csv", "fmt"] }
+polars = { version = "0.55.2", default-features = false, features = [
+    "csv",
+    "fmt",
+] }
 
 [profile.release]
 opt-level = 3

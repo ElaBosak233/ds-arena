@@ -1,4 +1,4 @@
-FROM rust:1.99.0-bookworm AS backend
+FROM rust:1.99 AS backend
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ RUN cargo fetch --locked && \
     cargo build --locked --release --bin dsa-server --target "$(uname -m)-unknown-linux-musl" && \
     cp "/app/target/$(uname -m)-unknown-linux-musl/release/dsa-server" /usr/local/bin/dsa-server
 
-FROM node:26-alpine AS frontend
+FROM node:26 AS frontend
 
 WORKDIR /app
 
