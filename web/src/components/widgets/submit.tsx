@@ -1,5 +1,6 @@
 import { BotIcon, FileIcon, RefreshCcwIcon, SendIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldButton, FieldIcon } from "@/components/ui/field";
 import { TextField } from "@/components/ui/text-field";
@@ -11,7 +12,7 @@ import { cn } from "@/utils";
 import { alova } from "@/utils/alova";
 
 function Submit() {
-  const sharedStore = useSharedStore();
+  const { refresh, saveHistory, setRefresh } = useSharedStore();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
@@ -33,7 +34,12 @@ function Submit() {
   }
 
   useEffect(() => {
-    void sharedStore?.refresh;
+    void refresh;
+
+    let active = true;
+    setCaptchaLoading(true);
+    setCaptchaId("");
+    setCaptchaAnswer("");
 
     const calculateWorker = new Worker(
       new URL("@/workers/pow.ts", import.meta.url),
@@ -41,30 +47,45 @@ function Submit() {
     );
 
     calculateWorker.onmessage = (e) => {
+      if (!active) return;
       const result = e.data;
       setCaptchaAnswer(result);
       setCaptchaLoading(false);
     };
 
-    async function fetchCaptchaData() {
-      setCaptchaLoading(true);
-      const res = (await alova.Get<WebResponse<Captcha>>("/captcha")).data;
-      const d = Number(res?.challenge?.split("#")[0]);
-      const c = res?.challenge?.split("#")[1];
-      setCaptchaId(res?.id || "");
+    calculateWorker.onerror = () => {
+      if (!active) return;
+      setCaptchaLoading(false);
+      toast.error("验证计算失败，请刷新重试");
+    };
 
-      calculateWorker.postMessage({ c, d });
+    async function fetchCaptchaData() {
+      try {
+        const res = (await alova.Get<WebResponse<Captcha>>("/captcha")).data;
+        if (!active) return;
+        if (!res) {
+          setCaptchaLoading(false);
+          toast.error("无法获取验证信息，请刷新重试");
+          return;
+        }
+        const [difficulty, c] = res.challenge.split("#");
+        setCaptchaId(res.id);
+        calculateWorker.postMessage({ c, d: Number(difficulty) });
+      } catch {
+        if (active) setCaptchaLoading(false);
+      }
     }
 
     fetchCaptchaData();
 
     return () => {
+      active = false;
       calculateWorker.terminate();
     };
-  }, [sharedStore.refresh]);
+  }, [refresh]);
 
-  function handleSubmit() {
-    if (!file || !captchaAnswer) {
+  async function handleSubmit() {
+    if (!file || !captchaId || !captchaAnswer || captchaLoading || loading) {
       return;
     }
 
@@ -72,18 +93,26 @@ function Submit() {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("captcha_id", captchaId!);
+    formData.append("captcha_id", captchaId);
     formData.append("captcha_answer", captchaAnswer);
-    alova
-      .Post<WebResponse<Submission>>("/submissions", formData)
-      .then((res) => {
-        sharedStore.saveHistory(res.data!);
-      })
-      .finally(() => {
-        setFile(null);
-        setLoading(false);
-        sharedStore.setRefresh();
-      });
+    try {
+      const res = await alova.Post<WebResponse<Submission>>(
+        "/submissions",
+        formData
+      );
+      if (!res.data) {
+        toast.error("服务器未返回提交记录，请重试");
+        return;
+      }
+      saveHistory(res.data);
+      setFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } catch {
+      // The request adapter displays errors; keep the selected file for retry.
+    } finally {
+      setLoading(false);
+      setRefresh();
+    }
   }
 
   return (
@@ -103,9 +132,12 @@ function Submit() {
             "hover:bg-input/80",
           ])}
           onClick={handleFileClick}
+          disabled={loading}
         >
           <input
             type="file"
+            accept=".csv,text/csv"
+            aria-label="选择 CSV 文件"
             ref={fileInputRef}
             onChange={handleFileChange}
             className="hidden"
@@ -117,10 +149,11 @@ function Submit() {
         <FieldIcon>
           <BotIcon />
         </FieldIcon>
-        <TextField value={captchaAnswer} onChange={() => {}} readOnly />
+        <TextField value={captchaAnswer} aria-label="验证结果" readOnly />
         <FieldButton
           loading={captchaLoading}
-          onClick={() => sharedStore.setRefresh()}
+          onClick={setRefresh}
+          aria-label="刷新验证"
           icon={<RefreshCcwIcon />}
         />
       </Field>
@@ -129,6 +162,7 @@ function Submit() {
         variant={"solid"}
         icon={<SendIcon />}
         loading={loading}
+        disabled={!file || !captchaAnswer || captchaLoading}
         onClick={handleSubmit}
         className={cn(["h-12"])}
       >

@@ -10,21 +10,34 @@ export const alova = createAlova({
   shareRequest: true,
   statesHook: ReactHook,
   cacheFor: {
+    GET: 0,
     POST: 0,
     PUT: 0,
     DELETE: 0,
   },
   responded: {
-    onSuccess: async (response, _method) => {
-      if (response.status === 502) {
-        toast.error("服务器离线", {
-          id: "502-backend-offline",
-          description: "服务器暂时无法处理请求",
+    onSuccess: async (response) => {
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        const message =
+          typeof body?.msg === "string"
+            ? body.msg
+            : `请求失败 (${response.status})`;
+        toast.error(response.status === 502 ? "服务器离线" : "请求失败", {
+          id: `http-error-${response.status}`,
+          description: message,
         });
-        return Promise.reject(response);
+        throw new Error(message);
       }
 
       return response.json();
+    },
+    onError: (error) => {
+      toast.error("网络请求失败", {
+        id: "network-error",
+        description: error.message,
+      });
+      throw error;
     },
   },
 });

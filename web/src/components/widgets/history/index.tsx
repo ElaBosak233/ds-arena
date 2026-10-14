@@ -1,9 +1,4 @@
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { useTable } from "@tanstack/react-table";
 import { useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -19,42 +14,44 @@ import { useSharedStore } from "@/storages/shared";
 import type { WebResponse } from "@/types";
 import { cn } from "@/utils";
 import { alova } from "@/utils/alova";
-import { columns } from "./columns";
+import { columns, features } from "./columns";
 
 function History() {
   const { history, saveHistory } = useSharedStore();
 
-  const table = useReactTable<Submission>({
+  const table = useTable({
+    features,
     data: history,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    getRowId: (submission) => submission.id,
   });
 
   useEffect(() => {
-    const interval = setInterval(async () => {
-      let count = 0;
-      history?.map(async (submission) => {
-        if (submission.accuracy) {
-          return;
-        }
+    const pending = history.filter((submission) => submission.accuracy == null);
+    if (!pending.length) return;
 
-        const res = await alova.Get<WebResponse<Submission>>("/submissions", {
-          params: {
-            id: submission.id,
-          },
-        });
+    let active = true;
+    let timer: ReturnType<typeof setTimeout>;
 
-        count++;
-        saveHistory(res.data!);
-      });
+    async function poll() {
+      await Promise.allSettled(
+        pending.map(async (submission) => {
+          const res = await alova.Get<WebResponse<Submission>>("/submissions", {
+            params: { id: submission.id },
+          });
+          if (active && res.data && res.data.accuracy != null) {
+            saveHistory(res.data);
+          }
+        })
+      );
+      if (active) timer = setTimeout(poll, 1000);
+    }
 
-      if (!count) {
-        clearInterval(interval);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
+    timer = setTimeout(poll, 1000);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
   }, [history, saveHistory]);
 
   return (
@@ -74,11 +71,9 @@ function History() {
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>
-                    {!header.isPlaceholder &&
-                      flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                    {!header.isPlaceholder && (
+                      <table.FlexRender header={header} />
+                    )}
                   </TableHead>
                 );
               })}
@@ -87,14 +82,11 @@ function History() {
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row, index) => (
-              <TableRow
-                key={index}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getAllCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <table.FlexRender cell={cell} />
                   </TableCell>
                 ))}
               </TableRow>

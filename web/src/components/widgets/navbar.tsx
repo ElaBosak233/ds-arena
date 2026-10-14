@@ -40,6 +40,7 @@ function Navbar() {
         </div>
         <div className={cn(["flex", "gap-3", "items-center"])}>
           <Button
+            aria-label={theme === "dark" ? "切换为浅色主题" : "切换为深色主题"}
             square
             icon={theme === "dark" ? <SunIcon /> : <MoonIcon />}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

@@ -1,7 +1,9 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import { type ColumnDef, tableFeatures } from "@tanstack/react-table";
 import type { Submission } from "@/models/submission";
 
-const columns: ColumnDef<Submission>[] = [
+const features = tableFeatures({});
+
+const columns: ColumnDef<typeof features, Submission>[] = [
   {
     accessorKey: "filename",
     header: "文件名",
@@ -10,7 +12,7 @@ const columns: ColumnDef<Submission>[] = [
     accessorKey: "accuracy",
     header: "正确率",
     cell: ({ row }) => {
-      if (row.original.accuracy) {
+      if (row.original.accuracy != null) {
         return `${row.original.accuracy * 100}%`;
       }
       return "...";
@@ -22,4 +24,4 @@ const columns: ColumnDef<Submission>[] = [
   },
 ];
 
-export { columns };
+export { columns, features };

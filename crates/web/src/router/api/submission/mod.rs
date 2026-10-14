@@ -10,8 +10,14 @@ use crate::traits::{WebError, WebResponse};
 
 pub async fn router() -> Router {
     Router::new()
-        .route("/", axum::routing::get(get_submission))
-        .route("/", axum::routing::post(create_submission))
+        .route(
+            "/submissions",
+            axum::routing::get(get_submission).post(create_submission),
+        )
+        .route(
+            "/submissions/",
+            axum::routing::get(get_submission).post(create_submission),
+        )
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -22,11 +28,13 @@ pub struct GetSubmissionRequest {
 pub async fn get_submission(
     Query(params): Query<GetSubmissionRequest>,
 ) -> Result<WebResponse<dsa_model::Submission>, WebError> {
-    let submission = dsa_cache::get::<dsa_model::Submission>(&params.id).await;
+    let submission = dsa_cache::get::<dsa_model::Submission>(&params.id)
+        .await
+        .ok_or_else(|| WebError::NotFound(json!("submission_not_found")))?;
 
     Ok(WebResponse {
         code: StatusCode::OK.as_u16(),
-        data: submission,
+        data: Some(submission),
         ..Default::default()
     })
 }
@@ -36,23 +44,47 @@ pub async fn create_submission(
 ) -> Result<WebResponse<dsa_model::Submission>, WebError> {
     let mut captcha_answer = dsa_captcha::Answer::default();
     let mut filename = String::new();
-    let mut data = Vec::<u8>::new();
-    while let Some(field) = multipart.next_field().await.unwrap() {
+    let mut data = None;
+    while let Some(field) = multipart
+        .next_field()
+        .await
+        .map_err(|err| WebError::BadRequest(json!(err.to_string())))?
+    {
         match field.name() {
             Some("file") => {
-                filename = field.file_name().unwrap().to_string();
-                data = match field.bytes().await {
+                filename = field
+                    .file_name()
+                    .filter(|name| !name.is_empty())
+                    .ok_or_else(|| WebError::BadRequest(json!("filename_required")))?
+                    .to_string();
+                data = Some(match field.bytes().await {
                     Ok(bytes) => bytes.to_vec(),
                     Err(_err) => {
                         return Err(WebError::BadRequest(json!("size_too_large")));
                     }
-                };
+                });
             }
-            Some("captcha_id") => captcha_answer.id = Some(field.text().await.unwrap()),
-            Some("captcha_answer") => captcha_answer.content = field.text().await.unwrap(),
+            Some("captcha_id") => {
+                captcha_answer.id = Some(
+                    field
+                        .text()
+                        .await
+                        .map_err(|err| WebError::BadRequest(json!(err.to_string())))?,
+                )
+            }
+            Some("captcha_answer") => {
+                captcha_answer.content = field
+                    .text()
+                    .await
+                    .map_err(|err| WebError::BadRequest(json!(err.to_string())))?
+            }
             _ => {}
         }
     }
+
+    let data = data
+        .filter(|data| !data.is_empty())
+        .ok_or_else(|| WebError::BadRequest(json!("file_required")))?;
 
     if !dsa_captcha::check(&captcha_answer).await.unwrap_or(false) {
         return Err(WebError::BadRequest(json!("captcha_error")));

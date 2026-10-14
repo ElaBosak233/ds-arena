@@ -96,13 +96,14 @@ interface FieldButtonProps extends React.ComponentProps<typeof Button> {}
 
 function FieldButton(props: FieldButtonProps) {
   const { className, children, ref, ...rest } = props;
-  const { size } = React.useContext(FieldContext);
+  const { size, disabled } = React.useContext(FieldContext);
 
   return (
     <Button
       ref={ref}
       size={size}
       type={"button"}
+      disabled={disabled || props.disabled}
       className={cn(extraBtnSection({ size }), className)}
       {...rest}
     >
@@ -136,4 +137,4 @@ const extraBtnSection = cva(
   }
 );
 
-export { FieldRoot as Field, FieldIcon, FieldButton, FieldContext };
+export { FieldButton, FieldContext, FieldIcon, FieldRoot as Field };

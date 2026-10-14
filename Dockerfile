@@ -1,28 +1,32 @@
-FROM rust:latest AS backend
+FROM rust:1.99.0-bookworm AS backend
 
 WORKDIR /app
 
-RUN rustup install nightly && \
-    rustup default nightly && \
-    rustup target add x86_64-unknown-linux-musl
+RUN rustup target add "$(uname -m)-unknown-linux-musl" && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends musl-tools musl-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt update && \
-    apt install -y musl-tools musl-dev clang pkg-config lld
+ENV CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=musl-gcc
+ENV CC_x86_64_unknown_linux_musl=musl-gcc
+ENV CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=musl-gcc
+ENV CC_aarch64_unknown_linux_musl=musl-gcc
 
 COPY . .
 
-RUN cargo fetch && \
-    cargo build --release --bin dsa-server --target x86_64-unknown-linux-musl && \
-    cp /app/target/x86_64-unknown-linux-musl/release/dsa-server /usr/local/bin/dsa-server
+RUN cargo fetch --locked && \
+    cargo build --locked --release --bin dsa-server --target "$(uname -m)-unknown-linux-musl" && \
+    cp "/app/target/$(uname -m)-unknown-linux-musl/release/dsa-server" /usr/local/bin/dsa-server
 
-FROM node:latest AS frontend
+FROM node:26-alpine AS frontend
 
 WORKDIR /app
 
+COPY ./web/package.json ./web/package-lock.json ./
+RUN npm ci --include=dev
 COPY ./web .
 
-RUN npm install && \
-    npm run build && \
+RUN npm run build && \
     mkdir -p /var/www/html && \
     cp /app/dist/. /var/www/html -r
 

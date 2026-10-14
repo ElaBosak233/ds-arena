@@ -80,4 +80,4 @@ const inputVariants = cva(
   }
 );
 
-export { TextField, inputVariants };
+export { inputVariants, TextField };

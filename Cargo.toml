@@ -7,7 +7,7 @@ authors = ["ElaBosak233 <i@e23.dev>"]
 edition = "2024"
 publish = false
 repository = "https://github.com/ElaBosak233/ds-arena"
-rust-version = "1.91.0"
+rust-version = "1.99.0"
 version = "1.1.1"
 
 [workspace.dependencies]
@@ -21,12 +21,12 @@ dsa-queue = { path = "crates/queue" }
 dsa-web = { path = "crates/web" }
 
 # Async
-tokio = { version = "1.48", features = ["full"] }
-tower = { version = "0.5" }
-tower-http = { version = "0.6", features = ["cors", "fs", "trace"] }
+tokio = { version = "1.53.3", features = ["full"] }
+tower = { version = "0.5.3" }
+tower-http = { version = "0.7.1", features = ["cors", "fs", "trace"] }
 
 # Web
-axum = { version = "0.8", features = [
+axum = { version = "0.8.9", features = [
     "ws",
     "http2",
     "multipart",
@@ -35,37 +35,37 @@ axum = { version = "0.8", features = [
     "tracing",
     "json",
 ] }
-tower_governor = { version = "0.8" }
+tower_governor = { version = "0.8.0" }
 
 # Security
-rustls = { version = "0.23", features = ["ring"] }
-ring = { version = "0.17" }
+rustls = { version = "0.23.45", default-features = false, features = ["ring", "std", "tls12"] }
+ring = { version = "0.17.14" }
 hex = { version = "0.4.3" }
 
 # Data Handling
-nanoid = { version = "0.4" }
-chrono = { version = "0.4", features = ["serde"] }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = { version = "1.0" }
+nanoid = { version = "0.5.0" }
+chrono = { version = "0.4.45", features = ["serde"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.154" }
 
 # Error Handling
-thiserror = { version = "2.0" }
-anyhow = { version = "1.0" }
+thiserror = { version = "2.0.21" }
+anyhow = { version = "1.0.104" }
 
 # Tracing
-tracing = { version = "0.1" }
-tracing-subscriber = { version = "0.3", features = [
+tracing = { version = "0.1.44" }
+tracing-subscriber = { version = "0.3.23", features = [
     "env-filter",
     "std",
     "json",
 ] }
-tracing-appender = "0.2"
-tracing-error = { version = "0.2" }
+tracing-appender = "0.2.5"
+tracing-error = { version = "0.2.1" }
 
 # Miscellaneous
-once_cell = { version = "1.21" }
-dashmap = { version = "6.1" }
-polars = { version = "0.52" }
+once_cell = { version = "1.21.4" }
+dashmap = { version = "6.2.1" }
+polars = { version = "0.55.2", default-features = false, features = ["csv", "fmt"] }
 
 [profile.release]
 opt-level = 3
