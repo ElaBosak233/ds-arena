@@ -1,6 +1,6 @@
 use std::io::Cursor;
 
-use polars::prelude::{CsvReader, SerReader};
+use polars::prelude::{CsvReadOptions, SerReader};
 
 use crate::check;
 
@@ -16,7 +16,11 @@ pub async fn checker() {
                         data: vec![],
                         ..submission
                     };
-                    if let Ok(df) = CsvReader::new(reader).finish() {
+                    if let Ok(df) = CsvReadOptions::default()
+                        .with_infer_schema_length(Some(0))
+                        .into_reader_with_file_handle(reader)
+                        .finish()
+                    {
                         let accuracy = check(df).await.unwrap_or(0.0);
                         submission.accuracy = Some(accuracy);
 

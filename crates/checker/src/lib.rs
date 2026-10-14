@@ -28,6 +28,7 @@ pub async fn init() -> Result<(), CheckerError> {
     }
     let df = CsvReadOptions::default()
         .with_has_header(true)
+        .with_infer_schema_length(Some(0))
         .try_into_reader_with_file_path(Some(criteria_path))?
         .finish()?;
 
@@ -118,6 +119,7 @@ mod tests {
     fn fixture(name: &str) -> DataFrame {
         CsvReadOptions::default()
             .with_has_header(true)
+            .with_infer_schema_length(Some(0))
             .try_into_reader_with_file_path(Some(
                 std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
                     .join("../../resources")
